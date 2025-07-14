@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.ensemble import RandomForestClassifier
-from utils.preprocessing import preprocess_dataframe
+from utils.preprocessing import preprocess  # <-- ici
 
 class AutoMLAgent:
     def __init__(self, df: pd.DataFrame, target_column: str):
@@ -12,7 +12,7 @@ class AutoMLAgent:
 
     def train_model(self):
         print("[INFO] Preprocessing...")
-        df_clean = preprocess_dataframe(self.df, self.target_column)
+        df_clean = preprocess(self.df)  # <-- sans target_column
 
         print("[INFO] Splitting dataset...")
         X = df_clean.drop(columns=[self.target_column])
@@ -27,6 +27,11 @@ class AutoMLAgent:
         print("[INFO] Evaluation:")
         print("Accuracy:", accuracy_score(y_test, y_pred))
         print(classification_report(y_test, y_pred))
+
+    def predict(self, X):
+        if self.model is None:
+            raise ValueError("Le modèle n'a pas été entraîné. Appelez train_model() ou run() d'abord.")
+        return self.model.predict(X)
 
     def run(self):
         self.train_model()
